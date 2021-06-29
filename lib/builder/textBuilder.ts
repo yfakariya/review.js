@@ -468,6 +468,10 @@ export class TextBuilder extends DefaultBuilder {
         process.out("◆→DTP連絡:次の1行インデントなし←◆\n");
         return false;
     }
+    block_blankline(process: BuilderProcess, _node: BlockElementSyntaxTree) {
+        process.out("\n");
+        return false;
+    }
 
     block_source_pre(process: BuilderProcess, node: BlockElementSyntaxTree) {
         process.out("◆→開始:ソースコードリスト←◆\n");
@@ -531,12 +535,28 @@ export class TextBuilder extends DefaultBuilder {
         process.out("◆→DTP連絡:「").out(nodeContentToString(process, node)).out("」に傍点←◆");
     }
 
+    inline_del_pre(process: BuilderProcess, _node: InlineElementSyntaxTree) {
+        process.out("◆→開始:削除表現←◆");
+    }
+
+    inline_del_post(process: BuilderProcess, _node: InlineElementSyntaxTree) {
+        process.out("◆→終了:削除表現←◆");
+    }
+
     inline_i_pre(process: BuilderProcess, _node: InlineElementSyntaxTree) {
         process.out("▲");
     }
 
     inline_i_post(process: BuilderProcess, _node: InlineElementSyntaxTree) {
         process.out("☆");
+    }
+
+    inline_ins_pre(process: BuilderProcess, _node: InlineElementSyntaxTree) {
+        process.out("◆→開始:挿入表現←◆");
+    }
+
+    inline_ins_post(process: BuilderProcess, _node: InlineElementSyntaxTree) {
+        process.out("◆→終了:挿入表現←◆");
     }
 
     inline_m_pre(process: BuilderProcess, _node: InlineElementSyntaxTree) {
@@ -554,6 +574,14 @@ export class TextBuilder extends DefaultBuilder {
 
     inline_strong_post(process: BuilderProcess, _node: InlineElementSyntaxTree) {
         process.out("☆");
+    }
+
+    inline_tcy_pre(process: BuilderProcess, _node: InlineElementSyntaxTree) {
+        process.out("◆→開始:回転←◆");
+    }
+
+    inline_tcy_post(process: BuilderProcess, _node: InlineElementSyntaxTree) {
+        process.out("◆→終了:縦回転←◆");
     }
 
     inline_uchar(process: BuilderProcess, node: InlineElementSyntaxTree) {

@@ -572,6 +572,10 @@ export class DefaultAnalyzer implements Analyzer {
         this.blockDecorationSyntax(builder, "noindent", 0);
     }
 
+    block_blankline(builder: AcceptableSyntaxBuilder) {
+        this.blockDecorationSyntax(builder, "blankline", 0);
+    }
+
     block_source(builder: AcceptableSyntaxBuilder) {
         this.blockDecorationSyntax(builder, "source", 1);
     }
@@ -665,8 +669,16 @@ export class DefaultAnalyzer implements Analyzer {
         this.inlineDecorationSyntax(builder, "bou");
     }
 
+    inline_del(builder: AcceptableSyntaxBuilder) {
+        this.inlineDecorationSyntax(builder, "del");
+    }
+
     inline_i(builder: AcceptableSyntaxBuilder) {
         this.inlineDecorationSyntax(builder, "i");
+    }
+
+    inline_ins(builder: AcceptableSyntaxBuilder) {
+        this.inlineDecorationSyntax(builder, "ins");
     }
 
     inline_m(builder: AcceptableSyntaxBuilder) {
@@ -675,6 +687,10 @@ export class DefaultAnalyzer implements Analyzer {
 
     inline_strong(builder: AcceptableSyntaxBuilder) {
         this.inlineDecorationSyntax(builder, "strong");
+    }
+
+    inline_tcy(builder: AcceptableSyntaxBuilder) {
+        this.inlineDecorationSyntax(builder, "tcy");
     }
 
     inline_uchar(builder: AcceptableSyntaxBuilder) {

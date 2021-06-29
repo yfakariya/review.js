@@ -1052,6 +1052,12 @@ var HtmlBuilder = /** @class */ (function (_super) {
         // paragraphPre 中で処理
         return false;
     };
+    HtmlBuilder.prototype.block_blankline_pre = function (process, _node) {
+        process.outRaw("<p><br /></p>\n");
+    };
+    HtmlBuilder.prototype.block_blankline_post = function (process, _node) {
+        process.outRaw("");
+    };
     HtmlBuilder.prototype.block_source_pre = function (process, node) {
         process.outRaw("<div class=\"source-code\">\n");
         process.outRaw("<p class=\"caption\">").out(utils_1.nodeContentToString(process, node.args[0])).outRaw("</p>\n");
@@ -1103,11 +1109,23 @@ var HtmlBuilder = /** @class */ (function (_super) {
     HtmlBuilder.prototype.inline_bou_post = function (process, _node) {
         process.outRaw("</span>");
     };
+    HtmlBuilder.prototype.inline_del_pre = function (process, _node) {
+        process.outRaw("<del>");
+    };
+    HtmlBuilder.prototype.inline_del_post = function (process, _node) {
+        process.outRaw("</del>");
+    };
     HtmlBuilder.prototype.inline_i_pre = function (process, _node) {
         process.outRaw("<i>");
     };
     HtmlBuilder.prototype.inline_i_post = function (process, _node) {
         process.outRaw("</i>");
+    };
+    HtmlBuilder.prototype.inline_ins_pre = function (process, _node) {
+        process.outRaw("<ins>");
+    };
+    HtmlBuilder.prototype.inline_ins_post = function (process, _node) {
+        process.outRaw("</ins>");
     };
     HtmlBuilder.prototype.inline_m_pre = function (process, _node) {
         // TODO MathMLかなんかで…
@@ -1121,6 +1139,13 @@ var HtmlBuilder = /** @class */ (function (_super) {
     };
     HtmlBuilder.prototype.inline_strong_post = function (process, _node) {
         process.outRaw("</strong>");
+    };
+    HtmlBuilder.prototype.inline_tcy_pre = function (process, _node) {
+        // TODO ASCIIコード範囲内の1文字の場合はclassをtcyではなくuprightにする
+        process.outRaw("<span class=\"tcy\">");
+    };
+    HtmlBuilder.prototype.inline_tcy_post = function (process, _node) {
+        process.outRaw("</span>");
     };
     HtmlBuilder.prototype.inline_uchar_pre = function (process, _node) {
         process.outRaw("&#x");
@@ -1775,6 +1800,10 @@ var TextBuilder = /** @class */ (function (_super) {
         process.out("◆→DTP連絡:次の1行インデントなし←◆\n");
         return false;
     };
+    TextBuilder.prototype.block_blankline = function (process, _node) {
+        process.out("\n");
+        return false;
+    };
     TextBuilder.prototype.block_source_pre = function (process, node) {
         process.out("◆→開始:ソースコードリスト←◆\n");
         process.out("■").out(utils_1.nodeContentToString(process, node.args[0])).out("\n");
@@ -1824,11 +1853,23 @@ var TextBuilder = /** @class */ (function (_super) {
         // TODO 入れ子になっている場合オペレータさんにイミフな出力になっちゃう
         process.out("◆→DTP連絡:「").out(utils_1.nodeContentToString(process, node)).out("」に傍点←◆");
     };
+    TextBuilder.prototype.inline_del_pre = function (process, _node) {
+        process.out("◆→開始:削除表現←◆");
+    };
+    TextBuilder.prototype.inline_del_post = function (process, _node) {
+        process.out("◆→終了:削除表現←◆");
+    };
     TextBuilder.prototype.inline_i_pre = function (process, _node) {
         process.out("▲");
     };
     TextBuilder.prototype.inline_i_post = function (process, _node) {
         process.out("☆");
+    };
+    TextBuilder.prototype.inline_ins_pre = function (process, _node) {
+        process.out("◆→開始:挿入表現←◆");
+    };
+    TextBuilder.prototype.inline_ins_post = function (process, _node) {
+        process.out("◆→終了:挿入表現←◆");
     };
     TextBuilder.prototype.inline_m_pre = function (process, _node) {
         // TODO
@@ -1842,6 +1883,12 @@ var TextBuilder = /** @class */ (function (_super) {
     };
     TextBuilder.prototype.inline_strong_post = function (process, _node) {
         process.out("☆");
+    };
+    TextBuilder.prototype.inline_tcy_pre = function (process, _node) {
+        process.out("◆→開始:回転←◆");
+    };
+    TextBuilder.prototype.inline_tcy_post = function (process, _node) {
+        process.out("◆→終了:縦回転←◆");
     };
     TextBuilder.prototype.inline_uchar = function (process, node) {
         var hexString = utils_1.nodeContentToString(process, node);
@@ -2915,6 +2962,7 @@ exports.ja = {
         "inline_fn": "脚注への参照を示します。\n//footnote[sample][サンプルというにはショボすぎる]\nを参照するときは @<fn>{sample} と書きます。",
         "block_lead": "リード分を示します。\n//lead{\n世界を変えたくはないか？\n//}\nという形式で書きます。lead記法中では、全てのインライン構文やブロック構文が利用できます。",
         "block_noindent": "パラグラフを切らずに次の要素を続けることを示します。\n//noindent\nという形式で書きます。",
+        "block_blankline": "1行ぶんの空行を明示して入れます。\n//blankline\nという形式で書きます。",
         "block_source": "ソースコードの引用を示します。\n//source[hello.js]{\nconsole.log(\"Hello world!\");\n//}\nという形式で書きます。",
         "block_cmd": "コマンドラインのキャプチャを示します。\n//cmd{\n$ git clone git@github.com:vvakame/review.js.git\n//}\nという形式で書きます。",
         "block_quote": "引用を示します。\n//quote{\n神は言っている…ここで死ぬ定めではないと…\n//}\nという形式で書きます。",
@@ -2931,9 +2979,12 @@ exports.ja = {
         "inline_ttb": "テレタイプ文字(等幅フォント)のボールドで出力することを示します。\n@<ttb>{class}\nという形式で書きます。",
         "inline_ami": "網掛け有りで出力することを示します。\n@<ami>{重点！}\nという形式で書きます。",
         "inline_bou": "傍点有りで出力することを示します。\n@<bou>{なんだって？}\nという形式で書きます。",
+        "inline_del": "削除箇所を明示します。\nデフォルトでは打ち消し線が引かれます。\n@<del>{削除}という形式で書きます。",
         "inline_i": "イタリックで出力することを示します。\n@<i>{斜体}\nという形式で書きます。",
+        "inline_ins": "挿入箇所を明示します。\nデフォルトでは下線が引かれます。\n@<ins>{挿入}という形式で書きます。",
         "inline_m": "TeXの式を挿入することを示します。\n@<m>{TeX式}\nという形式で書きます。",
         "inline_strong": "ボールドで出力することを示します。\n@<strong>{強調！}\nという形式で書きます。",
+        "inline_tcy": "縦書きの文書において文字を縦中横で出力します。\n@<tcy>{AB}\nという形式で書きます。",
         "inline_uchar": "指定された値を16進数の値として扱い、Unicode文字として出力することを示します。\n@<uchar>{1F64B}\nという形式で書きます。",
         "inline_tt": "囲まれたテキストを等幅フォントで表示します。",
         "inline_em": "テキストを強調します。\n@<em>{このように強調されます}",
@@ -4121,6 +4172,9 @@ var DefaultAnalyzer = /** @class */ (function () {
     DefaultAnalyzer.prototype.block_noindent = function (builder) {
         this.blockDecorationSyntax(builder, "noindent", 0);
     };
+    DefaultAnalyzer.prototype.block_blankline = function (builder) {
+        this.blockDecorationSyntax(builder, "blankline", 0);
+    };
     DefaultAnalyzer.prototype.block_source = function (builder) {
         this.blockDecorationSyntax(builder, "source", 1);
     };
@@ -4196,14 +4250,23 @@ var DefaultAnalyzer = /** @class */ (function () {
     DefaultAnalyzer.prototype.inline_bou = function (builder) {
         this.inlineDecorationSyntax(builder, "bou");
     };
+    DefaultAnalyzer.prototype.inline_del = function (builder) {
+        this.inlineDecorationSyntax(builder, "del");
+    };
     DefaultAnalyzer.prototype.inline_i = function (builder) {
         this.inlineDecorationSyntax(builder, "i");
+    };
+    DefaultAnalyzer.prototype.inline_ins = function (builder) {
+        this.inlineDecorationSyntax(builder, "ins");
     };
     DefaultAnalyzer.prototype.inline_m = function (builder) {
         this.inlineDecorationSyntax(builder, "m");
     };
     DefaultAnalyzer.prototype.inline_strong = function (builder) {
         this.inlineDecorationSyntax(builder, "strong");
+    };
+    DefaultAnalyzer.prototype.inline_tcy = function (builder) {
+        this.inlineDecorationSyntax(builder, "tcy");
     };
     DefaultAnalyzer.prototype.inline_uchar = function (builder) {
         this.inlineDecorationSyntax(builder, "uchar");

@@ -636,6 +636,14 @@ export class HtmlBuilder extends DefaultBuilder {
         return false;
     }
 
+    block_blankline_pre(process: BuilderProcess, _node: BlockElementSyntaxTree) {
+        process.outRaw("<p><br /></p>\n");
+    }
+
+    block_blankline_post(process: BuilderProcess, _node: BlockElementSyntaxTree) {
+        process.outRaw("");
+    }
+
     block_source_pre(process: BuilderProcess, node: BlockElementSyntaxTree) {
         process.outRaw("<div class=\"source-code\">\n");
         process.outRaw("<p class=\"caption\">").out(nodeContentToString(process, node.args[0])).outRaw("</p>\n");
@@ -697,12 +705,28 @@ export class HtmlBuilder extends DefaultBuilder {
         process.outRaw("</span>");
     }
 
+    inline_del_pre(process: BuilderProcess, _node: InlineElementSyntaxTree) {
+        process.outRaw("<del>");
+    }
+
+    inline_del_post(process: BuilderProcess, _node: InlineElementSyntaxTree) {
+        process.outRaw("</del>");
+    }
+
     inline_i_pre(process: BuilderProcess, _node: InlineElementSyntaxTree) {
         process.outRaw("<i>");
     }
 
     inline_i_post(process: BuilderProcess, _node: InlineElementSyntaxTree) {
         process.outRaw("</i>");
+    }
+
+    inline_ins_pre(process: BuilderProcess, _node: InlineElementSyntaxTree) {
+        process.outRaw("<ins>");
+    }
+
+    inline_ins_post(process: BuilderProcess, _node: InlineElementSyntaxTree) {
+        process.outRaw("</ins>");
     }
 
     inline_m_pre(process: BuilderProcess, _node: InlineElementSyntaxTree) {
@@ -720,6 +744,15 @@ export class HtmlBuilder extends DefaultBuilder {
 
     inline_strong_post(process: BuilderProcess, _node: InlineElementSyntaxTree) {
         process.outRaw("</strong>");
+    }
+
+    inline_tcy_pre(process: BuilderProcess, _node: InlineElementSyntaxTree) {
+        // TODO ASCIIコード範囲内の1文字の場合はclassをtcyではなくuprightにする
+        process.outRaw("<span class=\"tcy\">");
+    }
+
+    inline_tcy_post(process: BuilderProcess, _node: InlineElementSyntaxTree) {
+        process.outRaw("</span>");
     }
 
     inline_uchar_pre(process: BuilderProcess, _node: InlineElementSyntaxTree) {
